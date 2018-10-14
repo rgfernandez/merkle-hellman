@@ -9,12 +9,8 @@ def extended_gcd(a, b):
 		q = int(c / d)
 		r = c % d
 
-		print(f'{r} = {c} - {q}({d})')
-
 		(old_s, s) = (s, old_s - q*s)
 		(old_t, t) = (t, old_t - q*t)
-
-		print(f'  {r} = {s}({a}) + {t}({b})')
 
 		if (r == 0):
 			return (d, old_s, old_t)
