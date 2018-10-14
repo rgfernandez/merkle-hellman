@@ -29,6 +29,9 @@ def applyknapsack(num, seq):
 		else:
 			res += '0'
 
+	if num > 0:				# no solution
+		return ''
+
 	res = res[::-1]
 
 	return res
@@ -69,6 +72,10 @@ def decrypt(a, m, w, message):
 	v = [elem*w_inv%m for elem in message]		# decrypt message
 
 	v = [applyknapsack(elem, a) for elem in v]
+
+	if '' in v:
+		print('Knapsack problem was not solved')
+		return ''
 
 	res = ''.join(v)
 
