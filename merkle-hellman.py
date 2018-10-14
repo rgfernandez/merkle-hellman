@@ -63,7 +63,7 @@ def encrypt(a, m, w, message):
 
 	blocks = subdivide(seq, n)
 
-	blocks = [applyfunction(b,elem) for elem in blocks]
+	blocks = [applyfunction(b,elem)%m for elem in blocks]
 
 	return tuple(blocks)
 
