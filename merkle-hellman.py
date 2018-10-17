@@ -47,9 +47,12 @@ def subdivide(seq, n):
 
 	return blocks
 
-def encrypt(a, m, w, message):
+def showpublickey(a, m, w):
 	b = [w*elem%m for elem in a]
 
+	return tuple(b)
+
+def encrypt(b, m, message):
 	n = len(b)
 	seq = ''
 	for item in message:
@@ -67,9 +70,11 @@ def encrypt(a, m, w, message):
 
 	return tuple(blocks)
 
-def decrypt(a, m, w, message):
+def decrypt(b, m, w, message):
 	r, s, w_inv = extended_gcd(m, w)		# get inverse of w
 	v = [elem*w_inv%m for elem in message]		# decrypt message
+
+	a = [w_inv*elem%m for elem in b]		# solve for the superincreasing sequence
 
 	v = [applyknapsack(elem, a) for elem in v]
 
@@ -89,35 +94,44 @@ def decrypt(a, m, w, message):
 	return blocks
 
 def main():
-	resp = input('[E]ncrypt or [D]ecrypt? ').upper()
-	if resp not in ('E', 'D'):
+	resp = input('[S]how public key, [E]ncrypt, or [D]ecrypt? ').upper()
+	if resp not in ('S', 'E', 'D'):
 		print('Mode not recognized. Please run code again.')
 		return
 
-	a = tuple(int(n.strip().strip('(').strip(')').strip()) for n in input('Type sequence a: ').split(','))
-	if not issuperincreasing(a):
-		print('Sequence is not superincreasing. Please run code again.')
-		return
-
-	m = int(input('Type modulus m: '))
-	if not ismodulusvalid(m, a):
-		print('Modulus is not greater than 2*a_n. Please run code again.')
-		return
-
-	w = int(input('Type private key w: '))
-	if gcd(m, w) > 1:
-		print('Private key is NOT relatively prime with modulus. Please run code again.')
-		return
-
-	if resp == 'E':
-		message = input('Type message: ').upper()
+	if resp in ('S'):
+		seq = tuple(int(n.strip().strip('(').strip(')').strip()) for n in input('Type superincreasing sequence: ').split(','))
 	else:
+		seq = tuple(int(n.strip().strip('(').strip(')').strip()) for n in input('Type public key: ').split(','))
+	if resp in ('S'):
+		if not issuperincreasing(seq):
+			print('Sequence is not superincreasing. Please run code again.')
+			return
+
+	m = int(input('Type modulus: '))
+	if resp in ('S'):
+		if not ismodulusvalid(m, seq):
+			print('Modulus is not greater than 2*a_n. Please run code again.')
+			return
+
+	if resp in ('S', 'D'):
+		w = int(input('Type private key: '))
+	if resp in ('S'):
+		if gcd(m, w) > 1:
+			print('Private key is NOT relatively prime with modulus. Please run code again.')
+			return
+
+	if resp in ('E'):
+		message = input('Type message: ').upper()
+	elif resp in ('D'):
 		message = tuple(int(n.strip().strip('(').strip(')').strip()) for n in input('Type message: ').split(','))
 
-	if resp == 'E':
-		print(encrypt(a, m, w, message))
-	else:
-		print(decrypt(a, m, w, message))
+	if resp in ('S'):
+		print(showpublickey(seq, m, w))
+	if resp in ('E'):
+		print(encrypt(seq, m, message))
+	elif resp in ('D'):
+		print(decrypt(seq, m, w, message))
 
 if __name__ == '__main__':
 	try:
