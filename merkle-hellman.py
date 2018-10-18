@@ -75,11 +75,17 @@ def decrypt(b, m, w, message):
 	v = [elem*w_inv%m for elem in message]		# decrypt message
 
 	a = [w_inv*elem%m for elem in b]		# solve for the superincreasing sequence
+	if not issuperincreasing(a):
+		print('Solved sequence is not superincreasing. Please run code again.')
+		return ''
+	if not ismodulusvalid(m, a):
+		print('Modulus is not greater than solved 2*a_n. Please run code again.')
+		return
 
 	v = [applyknapsack(elem, a) for elem in v]
 
 	if '' in v:
-		print('Knapsack problem was not solved')
+		print('Knapsack problem was not solved. Please run code again.')
 		return ''
 
 	res = ''.join(v)
@@ -116,7 +122,7 @@ def main():
 
 	if resp in ('S', 'D'):
 		w = int(input('Type private key: '))
-	if resp in ('S'):
+	if resp in ('S', 'D'):
 		if gcd(m, w) > 1:
 			print('Private key is NOT relatively prime with modulus. Please run code again.')
 			return
